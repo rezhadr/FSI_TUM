@@ -1,0 +1,156 @@
+{
+    "problem_data":{
+        "problem_name" : "RigidBodyStandalone",
+        "start_time"   : 0.0,
+        "end_time"     : 12.5
+    },
+    "solver_settings":{
+        "domain_size":3,
+        "echo_level":1,
+        "buffer_size":3,
+        "model_import_settings":{
+            "input_type":"none",
+            "input_filename":"Main",
+            "restart_load_file_label":"11.0",
+            "input_output_path":"restart"
+        },
+        "time_integration_parameters":{
+            "rho_inf": 1,
+            "time_step": 0.005
+        },
+        "active_dofs":[
+            {
+                "dof":"displacement_x",
+                "constrained": false,
+                "system_parameters":{
+                    "mass": 10.0,
+                    "stiffness" : 4000.0,
+                    "damping": 10.0
+                }
+            },{
+                "dof":"displacement_y",
+                "constrained": false,
+                "system_parameters":{
+                    "mass": 100.0,
+                    "stiffness" : 1000.0,
+                    "damping": 10.0
+                }
+            },{
+                "dof":"rotation_y",
+                "constrained": false,
+                "system_parameters":{
+                    "mass": 10.0,
+                    "stiffness" : 100.0,
+                    "damping": 10.0
+                }
+            },{
+                "dof":"rotation_z",
+                "constrained": false,
+                "system_parameters":{
+                    "mass": 10.0,
+                    "stiffness" : 1000.0,
+                    "damping": 10.0
+                }
+            }
+        ]
+    },
+    "output_processes":[],
+    "processes":{
+        "gravity":[
+            {
+                "python_module": "process_factory",
+                "kratos_module": "KratosMultiphysics",
+                "process_name": "ApplyConstantScalarValueProcess",
+                "Parameters": {
+                    "model_part_name": "Main.RigidBody",
+                    "variable_name": "BODY_FORCE_Y",
+                    "is_fixed":true,
+                    "value": -981
+                }
+            },{
+                "python_module": "process_factory",
+                "kratos_module": "KratosMultiphysics",
+                "process_name": "ApplyConstantScalarValueProcess",
+                "Parameters": {
+                    "model_part_name": "Main.RigidBody",
+                    "variable_name": "BODY_MOMENT_Y",
+                    "is_fixed":true,
+                    "value": -98.1
+                }
+            }
+        ],
+        "initial_conditions_process_list":[
+            {
+                "python_module": "process_factory",
+                "kratos_module": "KratosMultiphysics",
+                "process_name": "ApplyConstantScalarValueProcess",
+                "Parameters": {
+                    "model_part_name": "Main.RigidBody",
+                    "variable_name": "DISPLACEMENT_X",
+                    "value": 1
+                }
+            },{
+                "python_module": "process_factory",
+                "kratos_module": "KratosMultiphysics",
+                "process_name": "ApplyConstantScalarValueProcess",
+                "Parameters": {
+                    "model_part_name": "Main.RigidBody",
+                    "variable_name": "ACCELERATION_X",
+                    "value": -400
+                }
+            },{
+                "python_module": "process_factory",
+                "kratos_module": "KratosMultiphysics",
+                "process_name": "ApplyConstantScalarValueProcess",
+                "Parameters": {
+                    "model_part_name": "Main.RigidBody",
+                    "variable_name": "ANGULAR_VELOCITY_Z",
+                    "value": -10
+                }
+            }
+        ],
+        "boundary_conditions_process_list":[
+            {
+                "python_module" : "assign_vector_variable_process",
+                "kratos_module" : "KratosMultiphysics",
+                "process_name"  : "AssignVectorVariableProcess",
+                "Parameters": {
+                    "model_part_name" : "Main.RootPoint",
+                    "variable_name"   : "PRESCRIBED_DISPLACEMENT",
+                    "interval"        : [3.76991, "End"],
+                    "constrained"     : [false,false,false],
+                    "value"           : ["0.05*sin(20*t)", 0.0, 0.0]
+                }
+            },{
+                "python_module" : "assign_vector_variable_process",
+                "kratos_module" : "KratosMultiphysics",
+                "process_name"  : "AssignVectorVariableProcess",
+                "Parameters": {
+                    "model_part_name" : "Main.RigidBody",
+                    "variable_name"   : "PRESCRIBED_MOMENT",
+                    "interval"        : [3.14159, "End"],
+                    "constrained"     : [false,false,false],
+                    "value"           : [0.0, 0.0, "100*sin(10*t)"]
+                }
+            }
+        ],
+        "auxiliar_process_list":[
+            {
+                "python_module" : "point_output_process",
+                "kratos_module" : "KratosMultiphysics",
+                "process_name"  : "PointOutputProcess",
+                "Parameters": {
+                    "model_part_name"  : "Main.RigidBody",
+                    "entity_type"      : "node",
+                    "interval"         : [0.0, "End"],
+                    "position"         : [0, 0, 0],
+                    "output_variables" : ["DISPLACEMENT", "ROTATION", "VELOCITY", "ANGULAR_VELOCITY", "ACCELERATION", "ANGULAR_ACCELERATION"],
+                    "output_file_settings": {
+                        "file_name": "RigidBody",
+                        "output_path": "results"
+                    }
+                }
+            }
+        ]
+    }
+}

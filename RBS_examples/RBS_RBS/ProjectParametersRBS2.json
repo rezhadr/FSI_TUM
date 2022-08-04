@@ -1,0 +1,93 @@
+{
+    "problem_data":{
+        "problem_name" : "RBS2",
+        "start_time"   : 0.0,
+        "end_time"     : 12.5
+    },
+    "solver_settings":{
+        "domain_size":3,
+        "echo_level":0,
+        "buffer_size":3,
+        "model_import_settings":{
+            "input_type":"none",
+            "input_filename":"Main",
+            "restart_load_file_label":"11.005",
+            "input_output_path":"restart/RBS2"
+        },
+        "time_integration_parameters":{
+            "rho_inf": 1,
+            "time_step": 0.005
+        },
+        "active_dofs":[
+            {
+                "dof":"displacement_x",
+                "constrained": false,
+                "system_parameters":{
+                    "mass": 1.0,
+                    "stiffness" : 1225.0,
+                    "damping": 1.0
+                }
+            },{
+                "dof":"rotation_z",
+                "constrained": false,
+                "system_parameters":{
+                    "mass": 1.0,
+                    "stiffness" : 225.0,
+                    "damping": 1.0
+                }
+            }
+        ]
+    },
+    "output_processes":[
+        {
+            "python_module" : "save_restart_process",
+            "kratos_module" : "KratosMultiphysics",
+            "process_name"  : "SaveRestartProcess",
+            "Parameters"            : {
+                "model_part_name"              : "Main",
+                "echo_level"                   : 0,
+                "serializer_trace"             : "no_trace",
+                "restart_save_frequency"       : 1.0,
+                "restart_control_type"         : "time",
+                "save_restart_files_in_folder" : true,
+                "output_path"                  : "restart/RBS2",
+                "max_files_to_keep"            : 2
+            }
+        }
+    ],
+    "processes":{
+        "gravity":[],
+        "initial_conditions_process_list":[
+            {
+                "python_module" : "process_factory",
+                "kratos_module" : "KratosMultiphysics",
+                "process_name"  : "ApplyConstantScalarValueProcess",
+                "Parameters": {
+                    "model_part_name" : "Main.RigidBody",
+                    "variable_name"   : "ROTATION_Z",
+                    "is_fixed"        : false,
+                    "value"           : -0.015
+                }
+            }
+        ],
+        "boundary_conditions_process_list":[],
+        "auxiliar_process_list":[
+            {
+                "python_module" : "point_output_process",
+                "kratos_module" : "KratosMultiphysics",
+                "process_name"  : "PointOutputProcess",
+                "Parameters": {
+                    "model_part_name"  : "Main.RigidBody",
+                    "entity_type"      : "node",
+                    "interval"         : [0.0, "End"],
+                    "position"         : [0, 0, 0],
+                    "output_variables" : ["DISPLACEMENT", "ROTATION", "VELOCITY", "ANGULAR_VELOCITY", "ACCELERATION", "ANGULAR_ACCELERATION"],
+                    "output_file_settings": {
+                        "file_name": "RigidBody",
+                        "output_path": "results/RBS2"
+                    }
+                }
+            }
+        ]
+    }
+}
